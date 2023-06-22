@@ -90,11 +90,13 @@ const EAdmin = () => {
               />
               <input
                 type="search"
-                placeholder="Start typing to search for Customers"
+                placeholder="Search by User Id"
                 onChange={(e) => setQuery(e.target.value)}
               />
             </div>
-
+            {slicedData?.length === 0 ? (
+              <Alert>Sorry, we couldn't find any results for "{query}" </Alert>
+            ) : (
             <div className="overFlowCont">
               <Table>
                 <thead>
@@ -116,7 +118,11 @@ const EAdmin = () => {
 
               {/* Pagination */}
               <div className="pagination">
-                <button onClick={() => Prev()} className="prevBtn">
+              <div className="text">
+                    Showing {slicedData?.length} of {data?.length}
+                </div>
+             <div className="Pag">
+             <button onClick={() => Prev()} className="prevBtn">
                   <i className="fa-solid fa-backward"></i>
                 </button>
                 {currentPage2 === 1 ? (
@@ -160,8 +166,10 @@ const EAdmin = () => {
                     <i className="fa-sharp fa-solid fa-forward"></i>
                   </button>
                 )}
+             </div>
               </div>
             </div>
+            )}
           </>
         )}
       </section>

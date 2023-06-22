@@ -29,6 +29,13 @@ const Sidebar = ({ hamb, setHamb }) => {
     },
     {
       icon: (
+        <i className="fa-sharp fa-solid fa-money-bill text-xl mr-3 rounded-full "></i>
+      ),
+      link: "/Order",
+      name: "Order's",
+    },
+    {
+      icon: (
         <i className="fa-solid fa-user text-xl mr-3 rounded-full "></i>
       ),
       link: "/updateProfile",

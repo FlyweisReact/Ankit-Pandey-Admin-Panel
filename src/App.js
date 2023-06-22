@@ -8,6 +8,7 @@ import Dashboard from "./Screen/Dashboard";
 import EAdminCustomer from "./Screen/EAdminCustomer";
 import EAdmin from "./Screen/EAdmin";
 import UpdateProfile from "./Screen/UpdateProfile";
+import Orders from "./Screen/Orders";
 
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
         <Route path="/Customer" element={<EAdminCustomer />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/Admin" element={<EAdmin />} />
+        <Route path="/Order" element={<Orders />} />
         <Route path="/updateProfile" element={<UpdateProfile />} />
       </Routes>
     </>

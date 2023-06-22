@@ -1,13 +1,12 @@
 /** @format */
+
+import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Alert, Button, Form, Modal, Table } from "react-bootstrap";
-import { toast } from "react-toastify";
-import { AllCashback, UploadExcel } from "../Repository/Api";
+import { Alert, Table } from "react-bootstrap";
 import HOC from "./layout/HOC";
 
-const EAdminCustomer = () => {
+const Orders = () => {
   const [data, setData] = useState([]);
-  const [modalShow, setModalShow] = useState(false);
 
   // Pagination and Filter
   const [query, setQuery] = useState("");
@@ -19,8 +18,13 @@ const EAdminCustomer = () => {
   let pages2 = [];
 
   const TotolData = query
-    ? data?.filter((i) =>
-        i?.userId?.toLowerCase().includes(query?.toLowerCase())
+    ? data?.filter(
+        (i) =>
+          i?.orderId
+            ?.toString()
+            ?.toLowerCase()
+            .includes(query?.toLowerCase()) ||
+          i?.cash?.toString()?.toLowerCase().includes(query?.toLowerCase())
       )
     : data;
 
@@ -48,8 +52,10 @@ const EAdminCustomer = () => {
 
   const fetchData = async () => {
     try {
-      const { data } = await AllCashback();
-      setData(data.result);
+      const { data } = await axios.get(
+        "http://localhost:3040/api/v1/admin/getAllOrders"
+      );
+      setData(data.data);
     } catch (e) {
       console.log(e);
     }
@@ -59,62 +65,9 @@ const EAdminCustomer = () => {
     fetchData();
   }, []);
 
-  function MyVerticallyCenteredModal(props) {
-    const [file, setFile] = useState("");
-
-    const postHandler = async (e) => {
-      e.preventDefault();
-      try {
-        const { data } = await UploadExcel(file);
-        console.log(data.message);
-        toast.success("Uploaded");
-        fetchData();
-        props.onHide();
-      } catch (e) {
-        console.log(e);
-      }
-    };
-
-    return (
-      <Modal
-        {...props}
-        size="lg"
-        aria-labelledby="contained-modal-title-vcenter"
-        centered
-      >
-        <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter">
-            Upload Cashback
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form onSubmit={postHandler}>
-            <Form.Group className="mb-3">
-              <Form.Label>Name</Form.Label>
-              <Form.Control
-                type="file"
-                placeholder="Select File"
-                required
-                onChange={(e) => setFile(e.target.files[0])}
-              />
-            </Form.Group>
-
-            <Button variant="outline-success" type="submit">
-              Submit
-            </Button>
-          </Form>
-        </Modal.Body>
-      </Modal>
-    );
-  }
-
   return (
     <>
-      <MyVerticallyCenteredModal
-        show={modalShow}
-        onHide={() => setModalShow(false)}
-      />
-      <p className="headP">Dashboard / Cashback</p>
+      <p className="headP">Dashboard / Order's</p>
       <div
         className="pb-4 sticky top-0  w-full flex justify-between items-center"
         style={{ width: "98%", marginLeft: "2%" }}
@@ -123,15 +76,8 @@ const EAdminCustomer = () => {
           className="tracking-widest text-slate-900 font-semibold uppercase "
           style={{ fontSize: "1.5rem" }}
         >
-          All Cashback ( Total : {data?.length} )
+          All Orders ( Total : {data?.length} )
         </span>
-
-        <button
-          className="md:py-2 px-3 md:px-4 py-1 rounded-sm bg-[#19376d] text-white tracking-wider"
-          onClick={() => setModalShow(true)}
-        >
-          <i className="fa-solid fa-upload"></i> Upload
-        </button>
       </div>
 
       <section className="sectionCont">
@@ -146,43 +92,70 @@ const EAdminCustomer = () => {
               />
               <input
                 type="search"
-                placeholder="Search by User Id	"
+                placeholder="Search by Order Id and  User Id"
                 onChange={(e) => setQuery(e.target.value)}
               />
             </div>
+
             {slicedData?.length === 0 ? (
               <Alert>Sorry, we couldn't find any results for "{query}" </Alert>
             ) : (
-
-            <div className="overFlowCont">
-              <Table>
-                <thead>
-                  <tr>
-                    <th>SNo.</th>
-                    <th>User Id</th>
-                    <th>Cashback</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {slicedData?.map((i, index) => (
-                    <tr key={index}>
-                      <td>#{index + 1} </td>
-                      <td> {i.userId} </td>
-                      <td>
-                        {" "}
-                        <i className="fa-solid fa-indian-rupee-sign"></i>{" "}
-                        {i.cash}{" "}
-                      </td>
+              <div className="overFlowCont">
+                <Table>
+                  <thead>
+                    <tr>
+                      <th>Number.</th>
+                      <th>OrderId</th>
+                      <th>Cash</th>
+                      <th>Prc</th>
+                      <th>discQtyPerc</th>
+                      <th>Qty</th>
+                      <th>Sym</th>
+                      <th>Status</th>
+                      <th>Exseg</th>
+                      <th>ExchConfrmtime</th>
+                      <th>ExchOrdID</th>
+                      <th>Pcode</th>
+                      <th>Avgprc</th>
+                      <th>Trantype</th>
+                      <th>Scripname</th>
+                      <th>Validity</th>
+                      <th>series</th>
+                      <th>remarks</th>
                     </tr>
-                  ))}
-                </tbody>
-              </Table>{" "}
-              <div className="pagination">
+                  </thead>
+                  <tbody>
+                    {slicedData?.map((i, index) => (
+                      <tr key={index}>
+                        <td> #{index + 1} </td>
+                        <td> {i.orderId} </td>
+                        <td> {i.cash} </td>
+                        <td> {i.Prc} </td>
+                        <td> {i.discQtyPerc} </td>
+                        <td> {i.Qty} </td>
+                        <td> {i.Sym} </td>
+                        <td> {i.Status} </td>
+                        <td> {i.Exseg} </td>
+                        <td> {i.ExchConfrmtime} </td>
+                        <td> {i.ExchOrdID} </td>
+                        <td> {i.Pcode} </td>
+                        <td> {i.Avgprc} </td>
+                        <td> {i.Trantype} </td>
+                        <td> {i.Scripname} </td>
+                        <td> {i.Validity} </td>
+                        <td> {i.series} </td>
+                        <td> {i.remarks} </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>{" "}
+                <div className="pagination">
+
                 <div className="text">
-                  Showing {slicedData?.length} of {data?.length}
+                    Showing {slicedData?.length} of {data?.length}
                 </div>
                 <div className="Pag">
-                  <button onClick={() => Prev()} className="prevBtn">
+                <button onClick={() => Prev()} className="prevBtn">
                     <i className="fa-solid fa-backward"></i>
                   </button>
                   {currentPage2 === 1 ? (
@@ -227,8 +200,10 @@ const EAdminCustomer = () => {
                     </button>
                   )}
                 </div>
+                 
+                </div>
               </div>
-            </div>)}
+            )}
           </>
         )}
       </section>
@@ -236,4 +211,4 @@ const EAdminCustomer = () => {
   );
 };
 
-export default HOC(EAdminCustomer);
+export default HOC(Orders);
